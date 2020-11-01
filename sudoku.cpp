@@ -277,25 +277,25 @@ SolveResult Solve(SudokuBoard& sol, const SudokuBoard& b)
     {
         U32 invalid = 0U;
 
-#define ITER0(k)											\
-if (const U32 t = b.m_cells[k])								\
-{															\
-    constexpr U32 i = (57 * U32(k)) >> 9;					\
-    constexpr U32 j = U32(k) - 9 * i;						\
-    constexpr U32 m = 3 * (11 * i >> 5) + (11 * j >> 5);	\
+#define ITER0(k)                                            \
+if (const U32 t = b.m_cells[k])                             \
+{                                                           \
+    constexpr U32 i = (57 * U32(k)) >> 9;                   \
+    constexpr U32 j = U32(k) - 9 * i;                       \
+    constexpr U32 m = 3 * (11 * i >> 5) + (11 * j >> 5);    \
                                                             \
-    const U32 r = 1U << t;									\
+    const U32 r = 1U << t;                                  \
                                                             \
-    const U32 a = s.m_row[i];								\
-    const U32 b = s.m_col[j];								\
-    const U32 c = s.m_sqr[m];								\
+    const U32 a = s.m_row[i];                               \
+    const U32 b = s.m_col[j];                               \
+    const U32 c = s.m_sqr[m];                               \
                                                             \
-    if ((a | b | c) & r)									\
-        ++invalid;											\
+    if ((a | b | c) & r)                                    \
+        ++invalid;                                          \
                                                             \
-    s.m_row[i] = a | r;										\
-    s.m_col[j] = b | r;										\
-    s.m_sqr[m] = c | r;										\
+    s.m_row[i] = a | r;                                     \
+    s.m_col[j] = b | r;                                     \
+    s.m_sqr[m] = c | r;                                     \
 }
 #define ITER1(n) ITER0(n) ITER0(n+1) ITER0(n+2)
 #define ITER2(n) ITER1(n) ITER1(n+3) ITER1(n+6)
