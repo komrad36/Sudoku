@@ -11,6 +11,8 @@
 
 #include <immintrin.h>
 
+// 36.1
+
 using U16 = uint16_t;
 
 static constexpr U32 kLookupI[81] = {
@@ -49,6 +51,7 @@ static SolveResult SolveInternal(Board& sol, SolveState& s)
 	constexpr U8 kAllCellsSolved = 0;
 	constexpr U8 kUnsolvedCells = 1;
 	constexpr U8 kBoardUpdated = 3;
+
 	U8 status;
 	do
 	{
@@ -64,7 +67,7 @@ static SolveResult SolveInternal(Board& sol, SolveState& s)
 			const U32 f = s.m_rowFree[i] & s.m_colFree[j] & s.m_sqrFree[m];		\
 			if (!f)															    \
 				return SolveResult::kNoSolution;							    \
-			if (!(f & (f - 1U)))											    \
+			if (!_blsr_u32(f))													\
 			{																    \
 				status = kBoardUpdated;											\
 				s.m_board.Set(k, _tzcnt_u32(f));							    \
@@ -86,7 +89,7 @@ static SolveResult SolveInternal(Board& sol, SolveState& s)
 
 	U32 bestK;
 	U32 bestCount = ~0U;
-	#define ITER0(k)															\
+#define ITER0(k)																\
 	if (!s.m_board.Get(k))													    \
 	{																		    \
 		constexpr U32 i = kLookupI[k];										    \
@@ -105,7 +108,7 @@ static SolveResult SolveInternal(Board& sol, SolveState& s)
 		}																	    \
 	}
 	ITERS();
-	#undef ITER0
+#undef ITER0
 
 	ASSUME(bestCount != ~0U);
 
@@ -118,21 +121,21 @@ label_found_best:;
 
 	U32 f = s.m_rowFree[i] & s.m_colFree[j] & s.m_sqrFree[m];
 	U8 res = 0;
+	ASSUME(f);
 
 	do
 	{
 		ASSUME(f);
 		SolveState newState = s;
-		const U32 t = _tzcnt_u32(f);
-		newState.m_board.Set(k, t);
-		const U32 r = ~(1U << t);
-		newState.m_rowFree[i] &= r;
-		newState.m_colFree[j] &= r;
-		newState.m_sqrFree[m] &= r;
+		newState.m_board.Set(k, _tzcnt_u32(f));
+		const U32 r = _blsi_u32(f);
+		newState.m_rowFree[i] &= ~r;
+		newState.m_colFree[j] &= ~r;
+		newState.m_sqrFree[m] &= ~r;
 		res += (U8)SolveInternal(sol, newState);
-		if (res == (U8)SolveResult::kMultipleSolutions)
+		if (res >= (U8)SolveResult::kMultipleSolutions)
 			return SolveResult::kMultipleSolutions;
-	} while (f &= (f - 1U));
+	} while ((f = _blsr_u32(f)));
 
 	return (SolveResult)res;
 }
