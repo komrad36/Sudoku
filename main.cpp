@@ -4,14 +4,16 @@
 *	kareem.h.omar@gmail.com
 *	https://github.com/komrad36
 *
-*	Last updated June 7, 2020
+*	Last updated Nov 1, 2020
 *******************************************************************/
 
 #include "sudoku.h"
 
 #include <iostream>
 
-static void PrintBoard(const Board& b)
+using U8 = uint8_t;
+
+static void PrintBoard(const SudokuBoard& b)
 {
 	std::cout << "\xda\xc4\xc4\xc4\xc4\xc4\xc2\xc4\xc4\xc4\xc4\xc4\xc2\xc4\xc4\xc4\xc4\xc4\xbf" << std::endl;
 
@@ -20,7 +22,7 @@ static void PrintBoard(const Board& b)
 		std::cout << "\xb3";
 		for (int j = 0; j < 9; ++j)
 		{
-			const int c = b.Get(9 * i + j);
+			const int c = b.m_cells[9 * i + j];
 			if (j % 3 == 2)
 				std::cout << ' ';
 			if (c)
@@ -40,6 +42,22 @@ static void PrintBoard(const Board& b)
 	std::cout << "\xc0\xc4\xc4\xc4\xc4\xc4\xc1\xc4\xc4\xc4\xc4\xc4\xc1\xc4\xc4\xc4\xc4\xc4\xd9" << std::endl;
 }
 
+static const char* SolveResultToString(SolveResult r)
+{
+	switch (r)
+	{
+	case SolveResult::kNoSolution:
+		return "kNoSolution";
+	case SolveResult::kUniqueSolution:
+		return "kUniqueSolution";
+	case SolveResult::kMultipleSolutions:
+		return "kMultipleSolutions";
+	case SolveResult::kInvalidBoard:
+		return "kInvalidBoard";
+	}
+	return "kUnknown";
+}
+
 int main()
 {
 	constexpr U8 cells[] =
@@ -57,15 +75,14 @@ int main()
 
 	//constexpr U8 cells[81] = { 0 };
 
-	Board b;
+	SudokuBoard b;
 	for (int i = 0; i < 81; ++i)
-		b.Set(i, cells[i]);
+		b.m_cells[i] = cells[i];
 
 	std::cout << "Board before solving:" << std::endl;
 	PrintBoard(b);
 
-
-	Board sol;
+	SudokuBoard sol;
 	SolveResult res = Solve(sol, b);
 
 	std::cout << "\nSolve result: " << SolveResultToString(res) << std::endl;

@@ -2,7 +2,7 @@
 
 Highly optimized sudoku solver for x86 that can detect and report boards with no solution/single solution/multiple solutions/invalid initial board.
 
-Requires `popcnt` and `tzcnt` instructions.
+Requires AVX2 (older versions required just the `popcnt` and `tzcnt` instructions, in case you can't support AVX2).
 
 Console output from running example in `main.cpp`:
 
