@@ -13,15 +13,15 @@
 
 enum class SolveResult : uint8_t
 {
-	kNoSolution,
-	kUniqueSolution,
-	kMultipleSolutions,
-	kInvalidBoard,
+    kNoSolution,
+    kUniqueSolution,
+    kMultipleSolutions,
+    kInvalidBoard,
 };
 
 struct SudokuBoard
 {
-	uint8_t m_cells[96];
+    uint8_t m_cells[96];
 };
 
 SolveResult Solve(SudokuBoard& sol, const SudokuBoard& b);
